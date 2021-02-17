@@ -40,16 +40,31 @@ python make_annot.py \
 
 
 
-
 - Building Singulairy container 
 
-https://hub.docker.com/r/zijingliu/ldsc 
+You can use the ```pull``` and ``` build ``` commands to download pre-built images from an external resource like the Container
+Library or Docker Hub.
+When called on a native Singularity image like those provided on the Container Library, ```pull```simply downloads the image file to your system. 
+But you don't really need to pull the image file to your system before you build, as Singularity recognizes URI beginning with ```shub://``` or ``` docker://```. 
+Meaning you can use build to download layers from Docker Hub and assemble them into Singularity containers, which is what I will demonstrate here using a pre-built docker image that another member of our lab made and uploaded to docker hub. 
+```
+$ singularity build ldsc.simg docker://zijingliu/ldsc
+```
+[Here is the link to the docker image](https://hub.docker.com/r/zijingliu/ldsc). 
+You can explore if interested, this image can be used to run a docker container as well using the commands provided on the page. 
+This is only a basic example, there are many more ways you can build a singularity however that is not the focus on this documentation. More on building singularities can be found [here](https://singularity.lbl.gov/docs-build-container#creating---writable-images-and---sandbox-directories). 
 
-Singularities can be built using docker images. Here I have created singularity using 
+I must stress that for most images, including the one in the example above, **you must mount your data into the container** when running it to be able to use it properly. Syntax to mounting and binding paths for docker containers and singularity containers are slightly different. You can find the relative documentations for mounting data for [docker container](https://docs.docker.com/engine/reference/commandline/run/) and [singularity containers](https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html#:~:text=If%20enabled%20by%20the%20system,the%20host%20system%20with%20ease.) here. 
+In the current case, where we are trying to run singularity from HPC with nextflow, so the command for mounting data should be within the nextflow config file, which will be disected in a little more detail below. 
 
 - Creating the Nextflow process 
-f
 
+The above ldsc script when wrapped into a nextflow process, can be found in the "singularity_ldsc_NF_pbs_test.nf" file. 
+There are a few things that I would like to clarify:
+1. Original script is already calling python in bash so there is not need to treat this as a python script for Nextflow. 
+Hence, no need to specify python versions etc. If you are trying to wrap python codes into nextflow, you can go to my other [repo](https://github.com/roxyisat-rex/nextflow_with_python/tree/master), I have also written a little guide for that, especially tagetted towards translating python and bash variables. 
+
+2. For the channels, paths must be from where you have mounted your data in the container. 
 
 - Running your NF process in your singularity container 
 
