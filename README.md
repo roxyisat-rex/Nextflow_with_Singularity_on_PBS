@@ -8,8 +8,7 @@ This guide will be seperated into the below sections:
 5. Running NF process in singularity container (nextflow config file) 
 6. Potential errors and useful commands 
 
-######Prerequisites###### 
-
+###### Prerequisites
 Singularity needs to be installed.
 Since this is a guide for singularity to be used with HPC, whether singularity is installed on the HPC you use depends on your institution. 
 Normally you do not have the admin privlige to install singularity, remember to ask a member of your HPC support staff, make sure it's installed. 
@@ -21,8 +20,7 @@ To use,
 module load singularity
 ``` 
 
-
-- Example
+###### Example
 Here instead of the easy "Hello world" example. I will be using a slightly more difficult example with potentially more operational.  
 This is a part of the LD score estimation for LD scoreregression, by Dr Finucane and Dr Bulik-Sullivan. 
 
@@ -37,7 +35,7 @@ python make_annot.py \
 		--bimfile 1000G.EUR.QC.22.bim \
 		--annot-file Brain_DPC_H3K27ac.annot.gz  
 ```
-- Building Singulairy container 
+###### Building Singulairy container 
 
 You can use the ```pull``` and ``` build ``` commands to download pre-built images from an external resource like the Container
 Library or Docker Hub.
@@ -54,7 +52,7 @@ This is only a basic example, there are many more ways you can build a singulari
 I must stress that for most images, including the one in the example above, **you must mount your data into the container** when running it to be able to use it properly. Syntax to mounting and binding paths for docker containers and singularity containers are slightly different. You can find the relative documentations for mounting data for [docker container](https://docs.docker.com/engine/reference/commandline/run/) and [singularity containers](https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html#:~:text=If%20enabled%20by%20the%20system,the%20host%20system%20with%20ease.) here. 
 In the current case, where we are trying to run singularity from HPC with nextflow, so the command for mounting data should be within the nextflow config file, which will be disected in a little more detail below. 
 
-- Creating the Nextflow process 
+###### Creating the Nextflow process 
 The above ldsc script when wrapped into a nextflow process, can be found in the "singularity_ldsc_NF_pbs_test.nf" file. 
 There are a few things that I would like to clarify:
 1. Original script is already calling python in bash so there is not need to treat this as a python script for Nextflow. 
@@ -66,7 +64,7 @@ In the example, I have binded my input data (.bed and .bim) files into the "mnt"
 input_data1 = Channel.fromPath('/mnt/1000G.EUR.QC.1.bim')
 ```
 
-- Running your NF process in your singularity container
+###### Running your NF process in your singularity container
 
 Usually running your NF processes with singularity containers is using the below codes. 
 ```
@@ -92,10 +90,10 @@ cacheDir = "/rds/general/user/user_name/home/live/.singularity-cache"
 ``` 
 This is a directory with all remote singularity images, and different singularities can be used for different processes. When using a computing cluster it must be a shared folder accessible to all computing nodes. There is also more on this Nextflow config file [page](https://www.nextflow.io/docs/latest/config.html#scope-singularity).
 
-- Potential errors and useful commends 
+###### Potential errors and useful commends 
 
 **PBS related**   
-1. Failed to submit process to grid scheduler for execution
+1. Failed to submit process to grid scheduler for execution.
 You need to use scope executor to specify for PBS in the nextflow config file, ex:
 ```
 executor {
