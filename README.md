@@ -48,7 +48,7 @@ https://hub.docker.com/r/zijingliu/ldsc
 Singularities can be built using docker images. Here I have created singularity using 
 
 - Creating the Nextflow process 
-
+f
 
 
 - Running your NF process in your singularity container 
