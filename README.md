@@ -123,6 +123,7 @@ In clusterOptions as you can see, I have configed according to PBS requirements/
 Solution to this is to give the abosulte path for the directory you wish to mount. 
 
 **Useful commends** 
+
 Something I found particularly useful here is the command.
 ```
 singularity exec -B docker_test:/mnt name_of_container.simg ls /mnt
