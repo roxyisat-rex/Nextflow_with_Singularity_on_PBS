@@ -26,7 +26,7 @@ This is a part of the LD score estimation for LD scoreregression, by Dr Finucane
 LDSC is a method to "accurately estimate genetic heritability and its enrichment in both homogenous and admixed populations with summary statistics 
 and in-sample LD estimates". 
 [This](https://github.com/bulik/ldsc/wiki/LD-Score-Estimation-Tutorial) is the link to the LDSC github repositry if you wish to learn more. You do not really need to know LDSC to understand this tutorial, it is just to provide more contexts. 
-
+ 
 Here we use a ".bed" file in combination with a ".bim" file from the 1000 Genome project to create a ".annot.gz" file. 
 ```
 python make_annot.py \
