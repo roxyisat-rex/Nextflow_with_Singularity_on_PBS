@@ -1,11 +1,12 @@
 # Nextflow_with_Singularity_on_PBS
 This is a guide for beginners to use Nextflow with Singularity on the PBS cluster (it could be applicable to other HPC too with just a little modification)
 This guide will be seperated into the below sections:
-1. 
-2.
-3.
-4. 
-5. 
+1. Prerequisites 
+2. A little background on the example 
+3. BUilding a singularity container 
+4. Creating the nextflow process 
+5. Running NF process in singularity container 
+6. Potential errors and useful commands 
 
 
 - prerequisites 
@@ -27,8 +28,7 @@ This is a part of the LD score estimation for LD scoreregression, by Dr Finucane
 
 LDSC is a method to "accurately estimate genetic heritability and its enrichment in both homogenous and admixed populations with summary statistics 
 and in-sample LD estimates". 
-https://github.com/bulik/ldsc/wiki/LD-Score-Estimation-Tutorial
-This is the link to the LDSC github repositry if you wish to learn more. You do not really need to know LDSC to understand this tutorial, it is just to provide more contexts. 
+[This] (https://github.com/bulik/ldsc/wiki/LD-Score-Estimation-Tutorial)is the link to the LDSC github repositry if you wish to learn more. You do not really need to know LDSC to understand this tutorial, it is just to provide more contexts. 
 
 Here we use a ".bed" file in combination with a ".bim" file from the 1000 Genome project to create a ".annot.gz" file. 
 ```
@@ -37,9 +37,6 @@ python make_annot.py \
 		--bimfile 1000G.EUR.QC.22.bim \
 		--annot-file Brain_DPC_H3K27ac.annot.gz  
 ```
-
-
-
 - Building Singulairy container 
 
 You can use the ```pull``` and ``` build ``` commands to download pre-built images from an external resource like the Container
@@ -58,13 +55,13 @@ I must stress that for most images, including the one in the example above, **yo
 In the current case, where we are trying to run singularity from HPC with nextflow, so the command for mounting data should be within the nextflow config file, which will be disected in a little more detail below. 
 
 - Creating the Nextflow process 
-
 The above ldsc script when wrapped into a nextflow process, can be found in the "singularity_ldsc_NF_pbs_test.nf" file. 
 There are a few things that I would like to clarify:
 1. Original script is already calling python in bash so there is not need to treat this as a python script for Nextflow. 
 Hence, no need to specify python versions etc. If you are trying to wrap python codes into nextflow, you can go to my other [repo](https://github.com/roxyisat-rex/nextflow_with_python/tree/master), I have also written a little guide for that, especially tagetted towards translating python and bash variables. 
 
 2. For the channels, paths must be from where you have mounted your data in the container. 
+In the example, I have mounted my input data (.bed and .bim) files into the "mnt" folder in the container by using ```runOptions``` in the nextflow config file. Therefore, 
 
 - Running your NF process in your singularity container 
 
