@@ -60,8 +60,8 @@ There are a few things that I would like to clarify:
 1. Original script is already calling python in bash so there is not need to treat this as a python script for Nextflow. 
 Hence, no need to specify python versions etc. If you are trying to wrap python codes into nextflow, you can go to my other [repo](https://github.com/roxyisat-rex/nextflow_with_python/tree/master), I have also written a little guide for that, especially tagetted towards translating python and bash variables. 
 
-2. For the channels, paths must be from where you have mounted your data in the container. 
-In the example, I have mounted my input data (.bed and .bim) files into the "mnt" folder in the container by using ```runOptions``` in the nextflow config file. Therefore, as you can see in the .nf script, Path is from the singularity container. 
+2. For the channels, paths must be from where you have binded your data in the container. 
+In the example, I have binded my input data (.bed and .bim) files into the "mnt" folder in the container by using ```runOptions``` in the nextflow config file. Therefore, as you can see in the .nf script, Path is from the singularity container. 
 ```
 input_data1 = Channel.fromPath('/mnt/1000G.EUR.QC.1.bim')
 ```
@@ -90,8 +90,54 @@ If this is a NF pipeline you are running, you can use ```cacheDir``` settings in
 ```
 cacheDir = "/rds/general/user/user_name/home/live/.singularity-cache"
 ``` 
-This is a directory with all of singularities, and different singularities can be used for different processes. 
+This is a directory with all remote singularity images, and different singularities can be used for different processes. When using a computing cluster it must be a shared folder accessible to all computing nodes. There is also more on this Nextflow config file [page](https://www.nextflow.io/docs/latest/config.html#scope-singularity).
 
 - Potential errors and useful commends 
 
+**PBS related**   
+1. Failed to submit process to grid scheduler for execution
+You need to use scope executor to specify for PBS in the nextflow config file, ex:
+```
+executor {
+    name = 'pbspro'
+    queueSize = 50
+    cpus = 1
+    memory = '32 GB'
+    }
+``` 
+2. PBS tells you to config for walltime or memory etc in a certain manner 
+Configuration for wall time usually happenes in the .PBS file. However, my experience with nextflow with singularity is that you need to put the PBS config in the nextflow config file as well, ex: 
+```
+process {
+  beforeScript = 'module load singularity'
+  executor = 'pbspro'
+  withName: singularity_test { 
+  clusterOptions = '-l select=1:ncpus=1:mem=2gb'
+  time = '1h'
+  }
+}
+``` 
+In clusterOptions as you can see, I have configed according to PBS requirements/ syntax. 
 
+3. You also need to ```module load nextflow``` before running. This can either be in the nextflow config file (beforeScript settings, yes you can put multiple things there) or in the .PBS file before the ```nextflow run myscript.nf```. 
+
+**Singularity related** 
+1. container creation failed. mount input_data->/mnt error: while mounting input_data:mount source doesn't exist. 
+Solution to this is to give the abosulte path for the directory you wish to mount. 
+
+**Useful commends** 
+Something I found particularly useful here is the command.
+```
+singularity exec -B docker_test:/mnt name_of_container.simg ls /mnt
+```
+This mounts the input directory to the mnt folder in the singularity container while running the container, and lets you view whether the mounting had been successful by listing all the contents of the mnt folder. Before you run your NF script full one, you may wish to check whether your singularity image is running ok and whether your data had been binded in the correct files this way. 
+
+If you would like to view inside your container to see its contents use: 
+```
+singularity exec name_of_container.simg ls /
+``` 
+This lets you see what is really in the container. 
+If you  use ```singularity shell singularity_test.simg``` and then use ```ls``` to try to view your container contents, you will not get an error message but you are not doing it correctly. ```Singularity shell``` creates an interactive shell with the container, and if you ```ls```, you probably get the full directory of your HPC home or full directory of where your singularity.simg is based, but this is not what is really inside your container. This is something to be aware of. 
+
+If there are any questions or issues, feel free to raise an issue. Will try to see if I can be any help. 
+Best of luck! 
