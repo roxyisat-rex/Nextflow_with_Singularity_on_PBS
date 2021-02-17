@@ -135,6 +135,7 @@ If you would like to view inside your container to see its contents use:
 singularity exec name_of_container.simg ls /
 ``` 
 This lets you see what is really in the container. 
+
 If you  use ```singularity shell singularity_test.simg``` and then use ```ls``` to try to view your container contents, you will not get an error message but you are not doing it correctly. ```Singularity shell``` creates an interactive shell with the container, and if you ```ls```, you probably get the full directory of your HPC home or full directory of where your singularity.simg is based, but this is not what is really inside your container. This is something to be aware of. 
 
 If there are any questions or issues, feel free to raise an issue. Will try to see if I can be of any help. 
