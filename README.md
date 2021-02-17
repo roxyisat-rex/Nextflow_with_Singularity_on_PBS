@@ -23,7 +23,6 @@ module load singularity
 ###### Example
 Here instead of the easy "Hello world" example. I will be using a slightly more difficult example with potentially more operational.  
 This is a part of the LD score estimation for LD scoreregression, by Dr Finucane and Dr Bulik-Sullivan. 
-
 LDSC is a method to "accurately estimate genetic heritability and its enrichment in both homogenous and admixed populations with summary statistics 
 and in-sample LD estimates". 
 [This](https://github.com/bulik/ldsc/wiki/LD-Score-Estimation-Tutorial) is the link to the LDSC github repositry if you wish to learn more. You do not really need to know LDSC to understand this tutorial, it is just to provide more contexts. 
@@ -50,7 +49,7 @@ You can explore if interested, this image can be used to run a docker container 
 This is only a basic example, there are many more ways you can build a singularity however that is not the focus on this documentation. More on building singularities can be found [here](https://singularity.lbl.gov/docs-build-container#creating---writable-images-and---sandbox-directories). 
 
 I must stress that for most images, including the one in the example above, **you must mount your data into the container** when running it to be able to use it properly. Syntax to mounting and binding paths for docker containers and singularity containers are slightly different. You can find the relative documentations for mounting data for [docker container](https://docs.docker.com/engine/reference/commandline/run/) and [singularity containers](https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html#:~:text=If%20enabled%20by%20the%20system,the%20host%20system%20with%20ease.) here. 
-In the current case, where we are trying to run singularity from HPC with nextflow, so the command for mounting data should be within the nextflow config file, which will be disected in a little more detail below. 
+In the current case, we are trying to run singularity from HPC with nextflow, so the command for mounting data should be within the nextflow config file, which will be disected in a little more detail below. 
 
 ###### Creating the Nextflow process 
 The above ldsc script when wrapped into a nextflow process, can be found in the "singularity_ldsc_NF_pbs_test.nf" file. 
