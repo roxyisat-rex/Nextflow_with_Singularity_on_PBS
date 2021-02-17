@@ -8,8 +8,8 @@ This guide will be seperated into the below sections:
 5. Running NF process in singularity container (nextflow config file) 
 6. Potential errors and useful commands 
 
+######Prerequisites###### 
 
-- Prerequisites 
 Singularity needs to be installed.
 Since this is a guide for singularity to be used with HPC, whether singularity is installed on the HPC you use depends on your institution. 
 Normally you do not have the admin privlige to install singularity, remember to ask a member of your HPC support staff, make sure it's installed. 
