@@ -5,11 +5,11 @@ This guide will be seperated into the below sections:
 2. A little background on the example 
 3. BUilding a singularity container 
 4. Creating the nextflow process 
-5. Running NF process in singularity container 
+5. Running NF process in singularity container (nextflow config file) 
 6. Potential errors and useful commands 
 
 
-- prerequisites 
+- Prerequisites 
 Singularity needs to be installed.
 Since this is a guide for singularity to be used with HPC, whether singularity is installed on the HPC you use depends on your institution. 
 Normally you do not have the admin privlige to install singularity, remember to ask a member of your HPC support staff, make sure it's installed. 
@@ -28,7 +28,7 @@ This is a part of the LD score estimation for LD scoreregression, by Dr Finucane
 
 LDSC is a method to "accurately estimate genetic heritability and its enrichment in both homogenous and admixed populations with summary statistics 
 and in-sample LD estimates". 
-[This](https://github.com/bulik/ldsc/wiki/LD-Score-Estimation-Tutorial)is the link to the LDSC github repositry if you wish to learn more. You do not really need to know LDSC to understand this tutorial, it is just to provide more contexts. 
+[This](https://github.com/bulik/ldsc/wiki/LD-Score-Estimation-Tutorial) is the link to the LDSC github repositry if you wish to learn more. You do not really need to know LDSC to understand this tutorial, it is just to provide more contexts. 
 
 Here we use a ".bed" file in combination with a ".bim" file from the 1000 Genome project to create a ".annot.gz" file. 
 ```
@@ -61,10 +61,37 @@ There are a few things that I would like to clarify:
 Hence, no need to specify python versions etc. If you are trying to wrap python codes into nextflow, you can go to my other [repo](https://github.com/roxyisat-rex/nextflow_with_python/tree/master), I have also written a little guide for that, especially tagetted towards translating python and bash variables. 
 
 2. For the channels, paths must be from where you have mounted your data in the container. 
-In the example, I have mounted my input data (.bed and .bim) files into the "mnt" folder in the container by using ```runOptions``` in the nextflow config file. Therefore, 
+In the example, I have mounted my input data (.bed and .bim) files into the "mnt" folder in the container by using ```runOptions``` in the nextflow config file. Therefore, as you can see in the .nf script, Path is from the singularity container. 
+```
+input_data1 = Channel.fromPath('/mnt/1000G.EUR.QC.1.bim')
+```
 
-- Running your NF process in your singularity container 
+- Running your NF process in your singularity container
 
-- Nextflow config file, detailed explanation of potential errors 
+Usually running your NF processes with singularity containers is using the below codes. 
+```
+nextflow run <your script> -with-singularity [singularity image file]
+```
+However when you factor in HPC, then you must include the nextflow config file. The config file I have used to run the ".nf" script attached in this repo on PBS Pro is also attached under the name "nextflow.config". It is recommanded that this name is used for the config file because "when a pipeline script is launched Nextflow looks for a file named nextflow.config in the current directory and in the script base directory (if it is not the same as the current directory). Finally it checks for the file $HOME/.nextflow/config." 
+In order to specify that the process/ pipeline needs to be ran with singularity, it should be specificed in the config file.  
+```
+process.container = '/rds/general/user/your_user_name/home/singularity_image_name.simg'
+```
+You must also include scope singularity in the config file.  
+```
+singularity {
+  enabled = true 
+  runOptions = "-B /rds/general/user/your_user_name/home/input_for_NF_ldsc:/mnt"
+}
+``` 
+**Here in the runOptions settings, you will put down how/ where you want to mount and bind your data!** Or else, singularity will NOT be able to find your data and your process will not run successfully. You can see here, I have binded my input data for my NF script into the "mnt" folder of the singularity container. 
+You can bind multiple directories at the same time as well, this should be described in more detail in the link for mounting and binding for singularity above. Simply put your commends for this in the runOptions settings. 
+If this is a NF pipeline you are running, you can use ```cacheDir``` settings in scope singularity like such:  
+```
+cacheDir = "/rds/general/user/user_name/home/live/.singularity-cache"
+``` 
+This is a directory with all of singularities, and different singularities can be used for different processes. 
+
+- Potential errors and useful commends 
 
 
